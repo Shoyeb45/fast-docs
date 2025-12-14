@@ -11,14 +11,14 @@ And you already identified a GREAT niche:
 
 This is an EXCELLENT target audience because:
 
-* They are active on GitHub
-* They contribute to open source
-* They share tools publicly
-* They love productivity enhancers
-* They use Markdown already
-* They will star your repo
-* They will contribute plugins
-* They are early adopters
+- They are active on GitHub
+- They contribute to open source
+- They share tools publicly
+- They love productivity enhancers
+- They use Markdown already
+- They will star your repo
+- They will contribute plugins
+- They are early adopters
 
 This is EXACTLY the audience that grew Excalidraw, Obsidian, dub.sh, Raycast, etc.
 
@@ -34,12 +34,12 @@ You only need **3 things**:
 
 Types of people to talk to:
 
-* Competitive programmers
-* Devs who write README/docs
-* Students writing notes in MD
-* People using Obsidian, HackMD, Typora
-* People who write blog posts in Markdown
-* GitHub users
+- Competitive programmers
+- Devs who write README/docs
+- Students writing notes in MD
+- People using Obsidian, HackMD, Typora
+- People who write blog posts in Markdown
+- GitHub users
 
 You already know many CPers — **your own network is your goldmine**.
 
@@ -54,7 +54,7 @@ Use these:
 
 ### ✅ 1. “Where do you currently write Markdown?”
 
-* VSCode? Obsidian? HackMD? GitHub?
+- VSCode? Obsidian? HackMD? GitHub?
   This tells you what tools you’re competing against.
 
 ### ✅ 2. “What annoys you the most about your current tool?”
@@ -93,9 +93,9 @@ You’ll get YES from 80% because Google Docs is too heavy.
 
 People give MUCH better feedback if you show them:
 
-* A screenshot of the editor
-* A simple Figma wireframe
-* A 10-second GIF
+- A screenshot of the editor
+- A simple Figma wireframe
+- A 10-second GIF
 
 Ask:
 
@@ -176,12 +176,12 @@ Perfect early adopters.
 
 Subreddits:
 
-* r/CompetitiveProgramming
-* r/webdev
-* r/ObsidianMD
-* r/Notion
-* r/Productivity
-* r/webapps
+- r/CompetitiveProgramming
+- r/webdev
+- r/ObsidianMD
+- r/Notion
+- r/Productivity
+- r/webapps
 
 ---
 
@@ -190,7 +190,7 @@ Subreddits:
 **10–15 interview-quality responses** = enough to shape your MVP.
 
 The goal is not perfection.
-The goal is to *align your MVP with real problems*, not guessed problems.
+The goal is to _align your MVP with real problems_, not guessed problems.
 
 ---
 

@@ -1,0 +1,3 @@
+{
+  "extends": "@fast-docs/typescript-config/base.json"
+}

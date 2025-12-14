@@ -4,7 +4,7 @@ This roadmap is actionable, realistic, and designed for solo builders who later 
 
 ---
 
-# ✅ **PHASE 0 — Vision & Positioning** *(1 day)*
+# ✅ **PHASE 0 — Vision & Positioning** _(1 day)_
 
 Before touching code, clarify:
 
@@ -16,26 +16,26 @@ Before touching code, clarify:
 
 Choose ONE of these to dominate (your differentiator):
 
-* ⚡ Speed & simplicity (like dub.sh)
-* 🧩 Plugins (like VSCode)
-* 🧠 AI-first docs (Notion AI but OSS)
-* 🎯 Developer-oriented features (code blocks, diagrams, LaTeX)
-* 🔌 Git-friendly markdown workflow
-* 💾 Offline-first + sync
+- ⚡ Speed & simplicity (like dub.sh)
+- 🧩 Plugins (like VSCode)
+- 🧠 AI-first docs (Notion AI but OSS)
+- 🎯 Developer-oriented features (code blocks, diagrams, LaTeX)
+- 🔌 Git-friendly markdown workflow
+- 💾 Offline-first + sync
 
 Pick 1–2 as differentiators so contributors know the vision.
 
 ---
 
-# ✅ **PHASE 1 — Technical Decisions** *(1–2 days)*
+# ✅ **PHASE 1 — Technical Decisions** _(1–2 days)_
 
 ## ✅ 1.1 Choose Your Core Stack
 
 ### Frontend
 
-* **Next.js** (best for SEO + future marketing pages)
-* **React + Zustand** (simple state mgmt)
-* **Tailwind CSS** (fast UI iteration)
+- **Next.js** (best for SEO + future marketing pages)
+- **React + Zustand** (simple state mgmt)
+- **Tailwind CSS** (fast UI iteration)
 
 ### Editor
 
@@ -43,30 +43,30 @@ You have two choices:
 
 #### Option A (recommended) — **Y.js + TipTap**
 
-* Mature real-time CRDT
-* Many open-source projects use this
-* TipTap editor is extremely customizable
-* Best balance: flexibility + community contributions
+- Mature real-time CRDT
+- Many open-source projects use this
+- TipTap editor is extremely customizable
+- Best balance: flexibility + community contributions
 
 #### Option B — **Codemirror 6 + Y.js**
 
-* More developer-centric
-* Perfect for Markdown
-* Slightly more barebones
+- More developer-centric
+- Perfect for Markdown
+- Slightly more barebones
 
 ### Backend
 
-* **Node.js + Express or Fastify**
-* **WebSockets** for collaboration
-* **PostgreSQL** (drizzle ORM or Prisma)
-* **Redis** for presence & session sync
+- **Node.js + Express or Fastify**
+- **WebSockets** for collaboration
+- **PostgreSQL** (drizzle ORM or Prisma)
+- **Redis** for presence & session sync
 
 ### Deployment
 
-* Frontend → Vercel
-* Backend → Railway / Fly.io
-* DB → Supabase / Neon
-* WebSockets → same backend or separate WS server
+- Frontend → Vercel
+- Backend → Railway / Fly.io
+- DB → Supabase / Neon
+- WebSockets → same backend or separate WS server
 
 ---
 
@@ -94,33 +94,33 @@ A very clean collaborative Markdown editor that loads instantly, feels smooth, a
 
 ### ⭐ Week 1 — Foundations
 
-* Setup Next.js project
-* Setup Tailwind + basic UI
-* Build Editor page
-* Integrate TipTap with Markdown extension
-* Setup Y.js + WebSocket provider
-* Real-time text sync working
-* Routing for docs: `/doc/:id`
-* Save documents in DB
+- Setup Next.js project
+- Setup Tailwind + basic UI
+- Build Editor page
+- Integrate TipTap with Markdown extension
+- Setup Y.js + WebSocket provider
+- Real-time text sync working
+- Routing for docs: `/doc/:id`
+- Save documents in DB
 
 ### ⭐ Week 2 — Core UI + Features
 
-* Document list (sidebar)
-* Markdown preview
-* Slash commands (like Notion) for headings, code blocks, tables
-* Cursor presence (color avatars)
-* Auto-save with debounce
-* Cloud sync
+- Document list (sidebar)
+- Markdown preview
+- Slash commands (like Notion) for headings, code blocks, tables
+- Cursor presence (color avatars)
+- Auto-save with debounce
+- Cloud sync
 
 ### ⭐ Week 3 — Polish
 
-* Clean UI styles
-* Toolbar
-* Keyboard shortcuts
-* Export to `.md` and `.pdf`
-* Public share link
-* “Made with ❤️ by @yourgithubname” footer
-* Host MVP live
+- Clean UI styles
+- Toolbar
+- Keyboard shortcuts
+- Export to `.md` and `.pdf`
+- Public share link
+- “Made with ❤️ by @yourgithubname” footer
+- Host MVP live
 
 ✅ At this point, you’re READY to go public & get contributors.
 
@@ -130,14 +130,14 @@ A very clean collaborative Markdown editor that loads instantly, feels smooth, a
 
 ### ✅ 3.1 Launch GitHub Correctly
 
-* Beautiful README
-* Screenshots + GIFs
-* Tech stack badges
-* “Good first issues”
-* Architecture diagram
-* Contribution guide
-* Code of conduct
-* MIT / Apache 2 license
+- Beautiful README
+- Screenshots + GIFs
+- Tech stack badges
+- “Good first issues”
+- Architecture diagram
+- Contribution guide
+- Code of conduct
+- MIT / Apache 2 license
 
 ### ✅ 3.2 Marketing for 1,000 GitHub Stars
 
@@ -160,20 +160,20 @@ These alone can give you **1k stars in 30–60 days**.
 
 To build a real open-source community:
 
-### ✅ 4.1 Create Issues Contributors *Want* to Solve
+### ✅ 4.1 Create Issues Contributors _Want_ to Solve
 
-* Themes (light, dark, solarized)
-* Plugins (diagram maker, kanban, todo lists)
-* Export improvements
-* Slash commands
-* Editor extensions
-* Mobile UI
+- Themes (light, dark, solarized)
+- Plugins (diagram maker, kanban, todo lists)
+- Export improvements
+- Slash commands
+- Editor extensions
+- Mobile UI
 
 ### ✅ 4.2 Create a Discord/Matrix community
 
-* “New contributors welcome” channel
-* Weekly updates
-* Roadmap page
+- “New contributors welcome” channel
+- Weekly updates
+- Roadmap page
 
 ### ✅ 4.3 Accept PRs Quickly
 
@@ -185,28 +185,27 @@ Community dies if you delay PR merges.
 
 These take your product from MVP → “Damn, this is good”.
 
-* Document version history ✅
+- Document version history ✅
 
-* Comments ✅
+- Comments ✅
 
-* Live cursors with names ✅
+- Live cursors with names ✅
 
-* File attachments ✅
+- File attachments ✅
 
-* Custom themes ✅
+- Custom themes ✅
 
-* Database persistence optimization ✅
+- Database persistence optimization ✅
 
-* AI features:
+- AI features:
+  - Summarize
+  - Improve writing
+  - Convert text → presentation
+  - Ask questions about document
 
-  * Summarize
-  * Improve writing
-  * Convert text → presentation
-  * Ask questions about document
+- Offline-first (sync when online)
 
-* Offline-first (sync when online)
-
-* Mobile app (Capacitor/Electron)
+- Mobile app (Capacitor/Electron)
 
 ---
 
@@ -216,26 +215,26 @@ Here’s how Excalidraw, Supabase, Rocket.Chat succeed:
 
 ### ✅ **Free**
 
-* Full editor
-* Collaboration
-* Basic features
+- Full editor
+- Collaboration
+- Basic features
 
 ### ✅ **Paid (SaaS)**
 
-* Teams & Workspaces
-* Unlimited history
-* unlimited documents
-* Private hosting
-* Alerts & audit logs
-* SSO
-* Enterprise controls
-* AI writing suite
+- Teams & Workspaces
+- Unlimited history
+- unlimited documents
+- Private hosting
+- Alerts & audit logs
+- SSO
+- Enterprise controls
+- AI writing suite
 
 ### ✅ **Enterprise**
 
-* Self-hosting support
-* Custom integrations
-* SLA
+- Self-hosting support
+- Custom integrations
+- SLA
 
 ---
 
@@ -243,12 +242,12 @@ Here’s how Excalidraw, Supabase, Rocket.Chat succeed:
 
 Once Fast Docs is stable and has 1k+ stars:
 
-* Create a plugin marketplace
-* Add extensions API
-* Create quarterly community events
-* Reach out to influencers
-* Publish on Awesome lists
-* Build integrations (GitHub, Jira, Slack, VSCode)
+- Create a plugin marketplace
+- Add extensions API
+- Create quarterly community events
+- Reach out to influencers
+- Publish on Awesome lists
+- Build integrations (GitHub, Jira, Slack, VSCode)
 
 This is how Excalidraw became huge.
 
@@ -280,4 +279,3 @@ I can now generate:
 ✅ Branding ideas (name, logo, theme colors)
 
 Just tell me what you want next.
-
