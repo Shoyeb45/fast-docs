@@ -19,6 +19,7 @@ import html from "highlight.js/lib/languages/xml";
 import json from "highlight.js/lib/languages/json";
 import bash from "highlight.js/lib/languages/bash";
 import sql from "highlight.js/lib/languages/sql";
+
 export async function renderMarkdown(markdown: string) {
   const file = await unified()
     .use(remarkParse)

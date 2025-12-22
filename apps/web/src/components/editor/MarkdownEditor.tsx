@@ -154,7 +154,7 @@ export const MarkdownEditorPanel = forwardRef<EditorHandle, MarkdownEditorPanelP
     }, [
       props.mode,
       // Only include these for collaborative mode
-      ...(props.mode === "collaborative" ? [props.ytext, props.provider] : [])
+      // ...(props.mode === "collaborative" ? [props.ytext, props.provider] : [])
     ]);
 
     return (
