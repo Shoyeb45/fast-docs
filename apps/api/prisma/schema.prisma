@@ -1,0 +1,43 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// User Table
+model User {
+  id             Int      @id @default(autoincrement())
+  name           String
+  email          String   @unique
+  avatarUrl      String   @map("avatar_url")
+  githubId       Int      @map("github_id")
+  githubUsername String   @unique @map("github_username")
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @default(now()) @updatedAt @map("updated_at")
+
+  keystroes Keystore[]
+
+  @@index([email])
+  @@index([githubUsername])
+}
+
+model Keystore {
+  id           Int     @id @default(autoincrement())
+  clientId     Int     @map("client_id")
+  primaryKey   String  @map("primary_key")
+  secondaryKey String  @map("secondary_key")
+  status       Boolean @default(true)
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
+
+  client User @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  @@index([clientId])
+  @@index([clientId, primaryKey, status])
+  @@index([clientId, primaryKey, secondaryKey])
+  @@map("keystores")
+}
