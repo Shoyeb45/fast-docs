@@ -42,7 +42,7 @@ export const createTokens = (
         ),
     );
 
-    if (!accessToken) throw new InternalError();
+    if (!accessToken) throw new InternalError('Failed to generated Access Token.');
 
     const refreshToken = JWT.encode(
         new JwtPayload(
@@ -54,7 +54,7 @@ export const createTokens = (
         ),
     );
 
-    if (!refreshToken) throw new InternalError();
+    if (!refreshToken) throw new InternalError('Failed to generated Refresh Token.');
 
     return {
         accessToken: accessToken,

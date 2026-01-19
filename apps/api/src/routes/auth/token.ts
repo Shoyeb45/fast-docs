@@ -12,6 +12,7 @@ import KeystoreRepo from '../../database/repositories/KeyStoreRepo';
 import { AuthFailureError } from '../../core/ApiError';
 import crypto from 'crypto';
 import { TokenRefreshResponse } from '../../core/ApiResponse';
+import { generateDeviceFingerprint } from '../../core/utils';
 const router = Router();
 
 router.post(
@@ -48,16 +49,24 @@ router.post(
             req.user.id,
             accessTokenPayload.prm,
             refreshTokenPayload.prm,
+            req.body.refreshToken
         );
 
         if (!keystore) throw new AuthFailureError('Invalid access token');
+
+        const currentFingerprint = generateDeviceFingerprint(req);
+        if (currentFingerprint !== keystore.deviceFingerprint) {
+            await KeystoreRepo.removeAllForUser(req.user.id);
+            throw new AuthFailureError('Device mismatch detected, please login again.');
+        }
+
         await KeystoreRepo.remove(keystore.id);
 
         const accessTokenKey = crypto.randomBytes(64).toString('hex');
         const refreshTokenKey = crypto.randomBytes(64).toString('hex');
 
-        await KeystoreRepo.create(req.user.id, accessTokenKey, refreshTokenKey);
         const tokens = createTokens(req.user, accessTokenKey, refreshTokenKey);
+        await KeystoreRepo.create(req.user.id, accessTokenKey, refreshTokenKey, tokens.refreshToken, currentFingerprint);
 
         new TokenRefreshResponse(
             'Token Issued',

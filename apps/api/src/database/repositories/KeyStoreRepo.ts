@@ -1,22 +1,25 @@
 import { prisma } from "..";
 
 
-const create = async (clientId: number, primaryKey: string, secondaryKey: string) => {
+const create = async (clientId: number, primaryKey: string, secondaryKey: string, refreshToken: string, deviceFingerprint: string) => {
     return await prisma.keystore.create({
         data: {
             clientId,
             primaryKey,
             secondaryKey,
+            refreshToken,
+            deviceFingerprint
         }
     });
 }
 
-const find = async (clientId: number, primaryKey: string, secondaryKey: string) => {
+const find = async (clientId: number, primaryKey: string, secondaryKey: string, refreshToken: string) => {
     return await prisma.keystore.findFirst({
         where: {
             clientId,
             primaryKey,
-            secondaryKey
+            secondaryKey,
+            refreshToken
         }
     });
 };
@@ -38,9 +41,18 @@ const findForKey = async (clientId: number, key: string) => {
     });
 }
 
+const removeAllForUser = async (userId: number) => {
+    return prisma.keystore.deleteMany({
+        where: {
+            clientId: userId
+        }
+    });
+}
+
 export default {
     create,
     find,
     remove,
-    findForKey
+    findForKey,
+    removeAllForUser
 };

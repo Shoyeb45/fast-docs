@@ -15,6 +15,7 @@ import {
 import userRepository from '../../database/repositories/UserRepo';
 import { SuccessResponse } from '../../core/ApiResponse';
 import { createTokens } from '../../core/authUtils';
+import { generateDeviceFingerprint } from '../../core/utils';
 
 const router = Router();
 
@@ -73,6 +74,9 @@ router.get(
         // generate random secret token keys for security
         const accessTokenKey = crypto.randomBytes(64).toString('hex');
         const refreshTokenKey = crypto.randomBytes(64).toString('hex');
+        const deviceFingerprint = generateDeviceFingerprint(req);
+
+        console.log(deviceFingerprint);
         
         let createdUser = await userRepository.findUserByGithubId(user.id);
         
@@ -99,11 +103,13 @@ router.get(
             createdUser.id,
             accessTokenKey,
             refreshTokenKey,
-        );
+            tokens.refreshToken,
+            deviceFingerprint
+        )
 
         new SuccessResponse('Login Success', {
             user: createdUser,
-            tokens,
+            tokens, 
         }).send(res);
     }),
 );
