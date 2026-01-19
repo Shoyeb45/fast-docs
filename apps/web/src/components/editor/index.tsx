@@ -46,7 +46,8 @@ export default function Editor() {
 
   return (
     <div className="flex flex-col h-screen bg-[#0d1117]">
-      {/* The header of the markdown editor, where the inserting and the view mode is there */}
+      
+      {/* The header of the markdown editor, where the insertions and the view mode is there */}
       <MarkdownToolbar
         viewMode={viewMode}
         onViewModeChange={setViewMode}
