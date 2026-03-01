@@ -68,16 +68,16 @@ export function MarkdownToolbar({
   isMobile,
 }: MarkdownToolbarProps) {
   return (
-    <div className="flex items-center justify-between px-4 h-10 border-b border-[#30363d] bg-[#161b22]/50">
+    <div className="flex h-10 shrink-0 items-center justify-between gap-2 border-b border-[#30363d] bg-[#161b22]/70 px-3">
       {!isMobile && (
-        <div className="flex items-center gap-1 px-4 h-10 border-b border-[#30363d] bg-[#161b22]/50">
+        <div className="flex items-center gap-0.5">
           <TooltipProvider>
             {toolbarButtons.map((button, index) => {
               if ("divider" in button) {
                 return (
                   <div
                     key={`divider-${index}`}
-                    className="w-px h-4 bg-[#30363d] mx-1"
+                    className="w-px h-4 bg-[#30363d] mx-0.5"
                   />
                 );
               }
@@ -89,7 +89,7 @@ export function MarkdownToolbar({
                     <Button
                       variant="ghost"
                       size="icon"
-                      className="h-7 w-7 text-[#8b949e] hover:text-white hover:bg-[#21262d]"
+                      className="h-8 w-8 text-[#8b949e] hover:text-white hover:bg-[#21262d]"
                       onClick={() => onInsert(button.markdown)}
                     >
                       <Icon className="w-4 h-4" />
@@ -109,7 +109,7 @@ export function MarkdownToolbar({
           </TooltipProvider>
         </div>
       )}
-      <div>
+      <div className="shrink-0">
         <MarkdownState
           viewMode={viewMode}
           onViewModeChange={onViewModeChange}
