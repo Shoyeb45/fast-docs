@@ -10,11 +10,12 @@ import {
 } from "react";
 import { AuthContext } from "@/context/auth-context";
 import * as workspaceApi from "@/lib/workspace-api";
-import type { Doc, Folder, WorkspaceData } from "@/types";
+import type { Doc, Folder, WorkspaceData, SharedWithMeItem } from "@/types";
 
 type WorkspaceContextValue = {
   folders: Folder[];
   docs: Doc[];
+  sharedWithMe: SharedWithMeItem[];
   isLoading: boolean;
   error: string | null;
   refetch: () => Promise<void>;
@@ -37,7 +38,7 @@ const WorkspaceContext = createContext<WorkspaceContextValue | null>(null);
 
 export function WorkspaceProvider({ children }: { children: ReactNode }) {
   const auth = useContext(AuthContext);
-  const [data, setData] = useState<WorkspaceData>({ folders: [], docs: [] });
+  const [data, setData] = useState<WorkspaceData>({ folders: [], docs: [], sharedWithMe: [] });
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -45,7 +46,7 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
 
   const refetch = useCallback(async () => {
     if (!isAuthenticated) {
-      setData({ folders: [], docs: [] });
+      setData({ folders: [], docs: [], sharedWithMe: [] });
       setError(null);
       setIsLoading(false);
       return;
@@ -63,7 +64,7 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (!isAuthenticated) {
-      setData({ folders: [], docs: [] });
+      setData({ folders: [], docs: [], sharedWithMe: [] });
       setError(null);
       setIsLoading(false);
       return;
@@ -159,6 +160,7 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
   const value: WorkspaceContextValue = {
     folders: data.folders,
     docs: data.docs,
+    sharedWithMe: data.sharedWithMe,
     isLoading,
     error,
     refetch,

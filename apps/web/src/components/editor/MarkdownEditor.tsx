@@ -17,6 +17,8 @@ interface CollaborativeEditorProps {
   ytext: Y.Text;
   provider: WebsocketProvider;
   onContentChange?: (content: string) => void;
+  /** When true, show content and cursors but disallow editing */
+  readOnly?: boolean;
 }
 
 // Standalone mode props
@@ -117,6 +119,9 @@ export const MarkdownEditorPanel = forwardRef<
     if (props.mode === "collaborative") {
       initialDoc = props.ytext.toString();
       extensions.push(yCollab(props.ytext, props.provider.awareness));
+      if (props.readOnly) {
+        extensions.push(EditorView.editable.of(false));
+      }
 
       if (props.onContentChange) {
         extensions.push(

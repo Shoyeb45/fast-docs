@@ -70,7 +70,15 @@ async function update(
 
 async function updateOne(
   id: number,
-  data: { title?: string; content?: string; yjsState?: Buffer | Uint8Array; folderId?: number | null; orderIndex?: number }
+  data: {
+    title?: string;
+    content?: string;
+    yjsState?: Buffer | Uint8Array;
+    folderId?: number | null;
+    orderIndex?: number;
+    shareToken?: string | null;
+    shareForAll?: boolean;
+  }
 ) {
   const payload: Record<string, unknown> = { ...data };
   if (data.yjsState !== undefined) {
@@ -97,6 +105,12 @@ async function getMaxOrderIndex(userId: number, folderId: number | null) {
   return doc?.orderIndex ?? -1;
 }
 
+async function findByShareToken(shareToken: string) {
+  return prisma.doc.findFirst({
+    where: { shareToken, shareForAll: true },
+  });
+}
+
 export default {
   create,
   findById,
@@ -107,4 +121,5 @@ export default {
   updateOne,
   remove,
   getMaxOrderIndex,
+  findByShareToken,
 };

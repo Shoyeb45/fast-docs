@@ -35,9 +35,45 @@ export interface Doc {
   orderIndex: number;
   createdAt: Date;
   updatedAt: Date;
+  /** Set when loading a single doc (owner | editor | viewer | commenter) */
+  role?: DocRole;
+}
+
+export type DocRole = 'owner' | 'editor' | 'viewer' | 'commenter';
+
+export type ShareRole = 'editor' | 'viewer' | 'commenter';
+
+export interface DocShareWithUser {
+  id: number;
+  docId: number;
+  userId: number;
+  role: ShareRole;
+  createdAt: string;
+  user: { id: number; name: string; email: string; avatarUrl: string };
+}
+
+export interface ShareLinkResponse {
+  shareToken: string;
+  shareForAll: boolean;
+  shareUrl: string;
+}
+
+export interface UserSearchItem {
+  id: number;
+  name: string;
+  email: string;
+  avatarUrl: string;
 }
 
 export interface WorkspaceData {
   folders: Folder[];
   docs: Doc[];
+  sharedWithMe: SharedWithMeItem[];
+}
+
+export interface SharedWithMeItem {
+  id: number;
+  title: string;
+  role: ShareRole;
+  ownerName: string;
 }

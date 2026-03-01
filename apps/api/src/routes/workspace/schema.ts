@@ -34,6 +34,30 @@ const updateFolderBody = z.object({
   orderIndex: z.number().int().min(0).optional(),
 });
 
+const shareRole = z.enum(['editor', 'viewer', 'commenter']);
+
+const createShareBody = z.object({
+  userId: z.number().int().positive(),
+  role: shareRole,
+});
+
+const updateShareBody = z.object({
+  role: shareRole,
+});
+
+const shareLinkBody = z.object({
+  shareForAll: z.boolean().optional(),
+});
+
+const shareIdParam = z.object({
+  shareId: z.coerce.number().int().positive(),
+});
+
+const docIdShareIdParams = z.object({
+  id: z.coerce.number().int().positive(),
+  shareId: z.coerce.number().int().positive(),
+});
+
 export default {
   auth: authSchema.auth,
   docIdParam,
@@ -42,4 +66,10 @@ export default {
   updateDocBody,
   createFolderBody,
   updateFolderBody,
+  shareRole,
+  createShareBody,
+  updateShareBody,
+  shareLinkBody,
+  shareIdParam,
+  docIdShareIdParams,
 };

@@ -32,6 +32,19 @@ async function updateDoc(
   return DocRepo.updateOne(docId, data);
 }
 
+/** Update doc by id when access already verified (e.g. by requireDocAccess). */
+async function updateDocById(
+  docId: number,
+  data: { title?: string; content?: string; yjsState?: Buffer; folderId?: number | null; orderIndex?: number }
+) {
+  if (Object.keys(data).length === 0) {
+    const doc = await DocRepo.findById(docId);
+    if (!doc) throw new NotFoundError('Document not found');
+    return doc;
+  }
+  return DocRepo.updateOne(docId, data);
+}
+
 async function deleteDoc(userId: number, docId: number) {
   const existing = await DocRepo.findByUserIdAndId(userId, docId);
   if (!existing) throw new NotFoundError('Document not found');
@@ -48,6 +61,7 @@ export default {
   createDoc,
   getDoc,
   updateDoc,
+  updateDocById,
   deleteDoc,
   moveDoc,
 };

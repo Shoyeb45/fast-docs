@@ -21,6 +21,7 @@ model User {
   keystroes Keystore[]
   folders   Folder[]
   docs      Doc[]
+  docShares DocShare[]
 
   @@index([email])
   @@index([githubUsername])
@@ -66,19 +67,39 @@ model Folder {
 }
 
 model Doc {
-  id         Int      @id @default(autoincrement())
-  userId     Int      @map("user_id")
-  folderId   Int?     @map("folder_id")
-  title      String
-  content    String   @default("")
-  yjsState   Bytes?   @map("yjs_state")
-  orderIndex Int      @default(0) @map("order_index")
-  createdAt  DateTime @default(now()) @map("created_at")
-  updatedAt  DateTime @default(now()) @updatedAt @map("updated_at")
+  id           Int      @id @default(autoincrement())
+  userId       Int      @map("user_id")
+  folderId     Int?     @map("folder_id")
+  title        String
+  content      String   @default("")
+  yjsState     Bytes?   @map("yjs_state")
+  orderIndex   Int      @default(0) @map("order_index")
+  shareToken   String?  @unique @map("share_token")
+  shareForAll  Boolean  @default(false) @map("share_for_all")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @default(now()) @updatedAt @map("updated_at")
 
-  user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  folder Folder? @relation(fields: [folderId], references: [id], onDelete: SetNull)
+  user   User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  folder Folder?    @relation(fields: [folderId], references: [id], onDelete: SetNull)
+  shares DocShare[]
 
   @@index([userId])
   @@index([userId, folderId])
+  @@index([shareToken])
+}
+
+model DocShare {
+  id        Int       @id @default(autoincrement())
+  docId     Int       @map("doc_id")
+  userId    Int       @map("user_id")
+  role      String    // 'editor' | 'viewer' | 'commenter'
+  createdAt DateTime @default(now()) @map("created_at")
+
+  doc  Doc  @relation(fields: [docId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([docId, userId])
+  @@index([docId])
+  @@index([userId])
+  @@map("doc_shares")
 }

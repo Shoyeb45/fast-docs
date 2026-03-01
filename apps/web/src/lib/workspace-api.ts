@@ -1,5 +1,5 @@
 import apiClient from './api-client';
-import type { Doc, Folder, WorkspaceData } from '@/types';
+import type { Doc, Folder, WorkspaceData, DocShareWithUser, ShareRole, ShareLinkResponse, UserSearchItem } from '@/types';
 
 const BASE = '/workspace';
 
@@ -46,4 +46,43 @@ export async function updateFolder(
 
 export async function deleteFolder(id: number): Promise<void> {
   await apiClient.delete(`${BASE}/folders/${id}`);
+}
+
+export async function getDocShares(docId: number): Promise<DocShareWithUser[]> {
+  return apiClient.get<DocShareWithUser[]>(`${BASE}/docs/${docId}/shares`);
+}
+
+export async function inviteDocShare(
+  docId: number,
+  payload: { userId: number; role: ShareRole }
+): Promise<DocShareWithUser> {
+  return apiClient.post<DocShareWithUser>(`${BASE}/docs/${docId}/shares`, payload);
+}
+
+export async function updateDocShareRole(
+  docId: number,
+  shareId: number,
+  payload: { role: ShareRole }
+): Promise<DocShareWithUser> {
+  return apiClient.patch<DocShareWithUser>(`${BASE}/docs/${docId}/shares/${shareId}`, payload);
+}
+
+export async function removeDocShare(docId: number, shareId: number): Promise<void> {
+  await apiClient.delete(`${BASE}/docs/${docId}/shares/${shareId}`);
+}
+
+export async function getOrCreateShareLink(
+  docId: number,
+  payload?: { shareForAll?: boolean }
+): Promise<ShareLinkResponse> {
+  return apiClient.post<ShareLinkResponse>(`${BASE}/docs/${docId}/share-link`, payload ?? {});
+}
+
+export async function getDocByShareToken(token: string): Promise<Doc & { role: 'viewer' }> {
+  return apiClient.get<Doc & { role: 'viewer' }>(`/share/s/${token}`);
+}
+
+export async function searchUsers(q: string): Promise<UserSearchItem[]> {
+  if (!q.trim()) return [];
+  return apiClient.get<UserSearchItem[]>(`${BASE}/users/search`, { params: { q: q.trim() } });
 }

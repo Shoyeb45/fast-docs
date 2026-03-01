@@ -1,9 +1,10 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useWorkspace } from "@/context/WorkspaceContext";
+import { AuthContext } from "@/context/auth-context";
 import { EditorHandle, MarkdownEditorPanel } from "@/components/editor/MarkdownEditor";
 import { MarkdownPreviewPanel } from "@/components/editor/MarkdownPreviewPanel";
 import { MarkdownState } from "@/components/editor/EditorState";
@@ -13,7 +14,13 @@ import {
   ResizablePanel,
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Share2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { ShareModal } from "@/components/workspace/ShareModal";
+import { getDocWsRoom } from "@/lib/ws-url";
+import apiClient from "@/lib/api-client";
+import * as Y from "yjs";
+import { WebsocketProvider } from "y-websocket";
 
 const SAVE_DEBOUNCE_MS = 800;
 
@@ -46,16 +53,66 @@ export function DocEditor({
   docId,
   initialContent,
   initialTitle,
+  docRole,
+  initialYjsState,
+  initialShareOpen,
 }: {
   docId: number;
   initialTitle: string;
   initialContent: string;
+  docRole?: "owner" | "editor" | "viewer" | "commenter";
+  initialYjsState?: string;
+  initialShareOpen?: boolean;
 }) {
   const router = useRouter();
+  const auth = useContext(AuthContext);
   const { updateDoc, getDocById } = useWorkspace();
   const [content, setContent] = useState(initialContent);
   const [viewMode, setViewMode] = useState<ViewMode>("split");
+  const [shareOpen, setShareOpen] = useState(initialShareOpen ?? false);
+  const [collab, setCollab] = useState<{
+    ydoc: Y.Doc;
+    provider: WebsocketProvider;
+    ytext: Y.Text;
+  } | null>(null);
   const editorRef = useRef<EditorHandle>(null);
+
+  const readOnly = docRole === "viewer" || docRole === "commenter";
+  const canEdit = docRole === "owner" || docRole === "editor";
+
+  useEffect(() => {
+    if (docRole == null) return;
+    const ydoc = new Y.Doc();
+    const ytext = ydoc.getText("content");
+    if (initialYjsState) {
+      try {
+        const state = Uint8Array.from(atob(initialYjsState), (c) => c.charCodeAt(0));
+        Y.applyUpdate(ydoc, state);
+      } catch (_e) {
+        ytext.insert(0, initialContent);
+      }
+    } else {
+      ytext.insert(0, initialContent);
+    }
+    const token = apiClient.getAccessToken();
+    const { baseUrl, room } = getDocWsRoom(docId, token);
+    const provider = new WebsocketProvider(baseUrl, room, ydoc);
+    const displayName = auth?.user?.name ?? auth?.user?.githubUsername ?? "Koala";
+    provider.awareness.setLocalStateField("user", { name: displayName });
+    setCollab({ ydoc, provider, ytext });
+    return () => {
+      provider.destroy();
+      ydoc.destroy();
+      setCollab(null);
+    };
+  }, [docId, docRole, initialContent, initialYjsState, auth?.user?.name, auth?.user?.githubUsername]);
+
+  useEffect(() => {
+    if (!collab) return;
+    const handler = () => setContent(collab.ytext.toString());
+    collab.ytext.observe(handler);
+    return () => collab.ytext.unobserve(handler);
+  }, [collab]);
 
   const docTitle = getDocById(docId)?.title ?? initialTitle;
 
@@ -85,7 +142,18 @@ export function DocEditor({
         <span className="min-w-0 truncate text-sm text-[#c9d1d9]" title={docTitle}>
           {docTitle || "Untitled"}
         </span>
-        <div className="ml-auto">
+        <div className="ml-auto flex items-center gap-2">
+          {docRole === "owner" && (
+            <Button
+              variant="ghost"
+              size="sm"
+              className="text-[#8b949e] hover:text-[#c9d1d9]"
+              onClick={() => setShareOpen(true)}
+            >
+              <Share2 className="h-4 w-4" />
+              Share
+            </Button>
+          )}
           <MarkdownState
             viewMode={viewMode}
             onViewModeChange={setViewMode}
@@ -93,6 +161,8 @@ export function DocEditor({
           />
         </div>
       </header>
+
+      <ShareModal docId={docId} open={shareOpen} onOpenChange={setShareOpen} />
 
       <div className="flex-1 min-h-0 overflow-hidden">
         <ResizablePanelGroup direction="horizontal" className="h-full">
@@ -102,13 +172,25 @@ export function DocEditor({
               minSize={30}
               className="relative"
             >
-              <MarkdownEditorPanel
-                key={docId}
-                mode="standalone"
-                initialValue={content}
-                onContentChange={handleContentChange}
-                ref={editorRef}
-              />
+              {collab ? (
+                <MarkdownEditorPanel
+                  key={docId}
+                  mode="collaborative"
+                  ytext={collab.ytext}
+                  provider={collab.provider}
+                  readOnly={readOnly}
+                  onContentChange={canEdit ? handleContentChange : undefined}
+                  ref={editorRef}
+                />
+              ) : (
+                <MarkdownEditorPanel
+                  key={docId}
+                  mode="standalone"
+                  initialValue={content}
+                  onContentChange={handleContentChange}
+                  ref={editorRef}
+                />
+              )}
             </ResizablePanel>
           )}
           {viewMode === "split" && (
