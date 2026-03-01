@@ -69,21 +69,36 @@ router.get(
         
         const user = userRes.data;
         if (!user) throw new NotFoundError('Invalid github user data received.');
-        
-        // generate random secret token keys for security
+
+        // GitHub may return null for name (if not set) or email (if private)
+        const name: string = (user.name ?? user.login ?? 'GitHub User').trim();
+        let email: string | null = user.email ? String(user.email).trim() : null;
+        if (!email) {
+            const emailsRes = await axios.get<Array<{ email: string; primary: boolean; verified: boolean }>>(
+                'https://api.github.com/user/emails',
+                { headers: { Authorization: `Bearer ${githubToken}` } }
+            );
+            const primary = emailsRes.data?.find((e) => e.primary && e.verified);
+            const firstVerified = emailsRes.data?.find((e) => e.verified);
+            email = primary?.email ?? firstVerified?.email ?? null;
+        }
+        if (!email || !email.trim()) {
+            throw new BadRequestError(
+                'No email found for your GitHub account. Please add a public email at github.com/settings/profile or grant email access and try again.'
+            );
+        }
+
         const accessTokenKey = crypto.randomBytes(64).toString('hex');
         const refreshTokenKey = crypto.randomBytes(64).toString('hex');
         const deviceFingerprint = generateDeviceFingerprint(req);
 
-        console.log(deviceFingerprint);
-        
         let createdUser = await userRepository.findUserByGithubId(user.id);
-        
+
         if (!createdUser) {
             createdUser = await userRepository.create({
-                name: user.name,
-                email: user.email,
-                avatarUrl: user.avatar_url,
+                name,
+                email,
+                avatarUrl: user.avatar_url || '',
                 githubId: user.id,
                 githubUsername: user.login,
             });

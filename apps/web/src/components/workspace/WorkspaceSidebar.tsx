@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { ChevronDown, ChevronRight, FileText, Folder, FolderPlus, MoreHorizontal, PanelLeftClose, Plus, Trash2 } from "lucide-react";
+import { ChevronDown, ChevronRight, FileText, Folder, FolderPlus, MoreHorizontal, PanelLeftClose, Plus, Share2, Trash2, Users } from "lucide-react";
 import { useState, useContext } from "react";
 import { useWorkspace } from "@/context/WorkspaceContext";
 import { AuthContext } from "@/context/auth-context";
@@ -102,6 +102,15 @@ function DocItem({
             </Button>
           </DropdownMenuTrigger>
         <DropdownMenuContent align="start" className="w-48 bg-[#161b22] border-[#30363d]">
+          <DropdownMenuItem
+            className="text-[#c9d1d9] focus:bg-[#21262d]"
+            asChild
+          >
+            <Link href={`/workspace/doc/${doc.id}?share=1`}>
+              <Share2 className="h-4 w-4" />
+              Share
+            </Link>
+          </DropdownMenuItem>
           <DropdownMenuItem
             className="text-[#c9d1d9] focus:bg-[#21262d]"
             onClick={(e) => {
@@ -348,8 +357,9 @@ function TreeItem({ node, depth, onNewFolderInside, onRefetch }: { node: TreeNod
 
 export function WorkspaceSidebar({ onToggle, standalone }: { onToggle?: () => void; standalone?: boolean }) {
   const router = useRouter();
+  const pathname = usePathname();
   const auth = useContext(AuthContext);
-  const { folders, docs, isLoading, error, createDoc, createFolder, refetch, updateDoc, updateFolder } = useWorkspace();
+  const { folders, docs, sharedWithMe, isLoading, error, createDoc, createFolder, refetch, updateDoc, updateFolder } = useWorkspace();
   const [newDocOpen, setNewDocOpen] = useState(false);
   const [newFolderOpen, setNewFolderOpen] = useState(false);
   const [newDocTitle, setNewDocTitle] = useState("");
@@ -513,15 +523,57 @@ export function WorkspaceSidebar({ onToggle, standalone }: { onToggle?: () => vo
             </Button>
           </div>
         ) : (
-          tree.map((node) => (
-            <TreeItem
-              key={treeNodeKey(node)}
-              node={node}
-              depth={0}
-              onNewFolderInside={openCreateFolderInside}
-              onRefetch={refetch}
-            />
-          ))
+          <>
+            {tree.map((node) => (
+              <TreeItem
+                key={treeNodeKey(node)}
+                node={node}
+                depth={0}
+                onNewFolderInside={openCreateFolderInside}
+                onRefetch={refetch}
+              />
+            ))}
+            {sharedWithMe.length > 0 && (
+              <div className="mt-4 border-t border-[#30363d] pt-3">
+                <div className="flex items-center gap-1.5 px-2 pb-2 text-xs font-medium text-[#8b949e]">
+                  <Users className="h-3.5 w-3.5" />
+                  Shared with me
+                </div>
+                <div className="space-y-0.5">
+                  {sharedWithMe.map((item) => (
+                    <Link
+                      key={item.id}
+                      href={`/workspace/doc/${item.id}`}
+                      className={cn(
+                        "flex w-full min-h-12 flex-col items-start justify-center gap-0.5 rounded-md px-2 py-2 text-sm text-[#c9d1d9] hover:bg-[#21262d]",
+                        pathname === `/workspace/doc/${item.id}` && "bg-[#21262d] text-white"
+                      )}
+                    >
+                      <span className="flex min-w-0 items-center gap-1.5 truncate w-full">
+                        <FileText className="h-4 w-4 shrink-0 text-[#8b949e]" />
+                        <span className="min-w-0 truncate">{item.title || "Untitled"}</span>
+                        <span
+                          className={cn(
+                            "ml-auto shrink-0 rounded px-1.5 py-0.5 text-[10px] font-medium",
+                            item.role === "editor" && "bg-[#238636]/20 text-[#3fb950]",
+                            item.role === "commenter" && "bg-[#1f6feb]/20 text-[#58a6ff]",
+                            item.role === "viewer" && "bg-[#8b949e]/20 text-[#8b949e]"
+                          )}
+                        >
+                          {item.role === "editor" && "Edit"}
+                          {item.role === "commenter" && "Comment"}
+                          {item.role === "viewer" && "View"}
+                        </span>
+                      </span>
+                      <span className="ml-5 truncate text-xs text-[#8b949e]">
+                        Shared by {item.ownerName}
+                      </span>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
+          </>
         )}
       </div>
 

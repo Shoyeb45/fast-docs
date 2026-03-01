@@ -1,6 +1,6 @@
 "use client";
 
-import { useParams, useRouter } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useContext, useEffect, useState } from "react";
 import * as workspaceApi from "@/lib/workspace-api";
 import { AuthContext } from "@/context/auth-context";
@@ -10,15 +10,22 @@ import { Button } from "@/components/ui/button";
 export default function DocPage() {
   const params = useParams();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const auth = useContext(AuthContext);
+  const [mounted, setMounted] = useState(false);
   const id = typeof params?.id === "string" ? parseInt(params.id, 10) : NaN;
   const [doc, setDoc] = useState<Awaited<ReturnType<typeof workspaceApi.getDoc>> | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const isAuthenticated = auth?.isAuthenticated ?? false;
 
   useEffect(() => {
+    if (!mounted) return;
     if (!isAuthenticated || !Number.isFinite(id)) {
       setLoading(false);
       if (!Number.isFinite(id)) setError("Invalid document ID");
@@ -41,7 +48,15 @@ export default function DocPage() {
     return () => {
       cancelled = true;
     };
-  }, [id, isAuthenticated]);
+  }, [mounted, id, isAuthenticated]);
+
+  if (!mounted) {
+    return (
+      <div className="flex h-full items-center justify-center">
+        <p className="text-[#8b949e]">Loading…</p>
+      </div>
+    );
+  }
 
   if (!isAuthenticated) {
     return (
@@ -94,6 +109,9 @@ export default function DocPage() {
       docId={doc.id}
       initialTitle={doc.title}
       initialContent={doc.content}
+      docRole={doc.role}
+      initialYjsState={doc.yjsState}
+      initialShareOpen={searchParams.get("share") === "1"}
     />
   );
 }

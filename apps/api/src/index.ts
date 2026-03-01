@@ -8,15 +8,18 @@ process.on('unhandledRejection', (reason, promise) => {
     process.exit(1);
 });
 
+import http from 'http';
 import logger from './core/logger.js';
 import { port } from './config.js';
 import { app } from './app.js';
+import { attachYjsWebSocket } from './ws/yjs-ws.js';
 
 async function start() {
     try {
         logger.info('App loaded');
-
-        app.listen(port, () => {
+        const server = http.createServer(app);
+        attachYjsWebSocket(server);
+        server.listen(port, () => {
             logger.info(`Server running on port: ${port}`);
         });
     } catch (err) {

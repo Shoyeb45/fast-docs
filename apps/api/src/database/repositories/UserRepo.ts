@@ -37,11 +37,30 @@ async function findUserByGithubId(githubId: number) {
     });
 }
 
+/** Search users by email or name (for invite). Returns limited fields. */
+async function searchForInvite(query: string, limit = 10) {
+    const q = query.trim();
+    if (!q || q.length < 2) return [];
+    const search = `%${q}%`;
+    return prisma.user.findMany({
+        where: {
+            OR: [
+                { email: { contains: search, mode: 'insensitive' } },
+                { name: { contains: search, mode: 'insensitive' } },
+            ],
+        },
+        select: { id: true, name: true, email: true, avatarUrl: true },
+        take: limit,
+        orderBy: { name: 'asc' },
+    });
+}
+
 export default {
     findByEmail,
     checkById,
     checkByEmail,
     create,
     findById,
-    findUserByGithubId
+    findUserByGithubId,
+    searchForInvite,
 };
