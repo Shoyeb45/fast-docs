@@ -1,7 +1,7 @@
 ### [X] Github Auth Flow in backend
 ### [X] Integrate in the frontend, silently refresh the token.
-### [ ] Store the docs in db.
-### [ ] Add folder structure in the website and give the control to user and move the files between directories.
+### [X] Store the docs in db.
+### [X] Add folder structure in the website and give the control to user and move the files between directories.
 ### [ ] Add just simple collaboration.
 ### [ ] Then use CRDT to add the collaboration and add room logic.
 ### [ ] Handle the create and delete of the character and track the user.

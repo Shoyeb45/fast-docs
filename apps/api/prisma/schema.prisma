@@ -19,6 +19,8 @@ model User {
   updatedAt      DateTime @default(now()) @updatedAt @map("updated_at")
 
   keystroes Keystore[]
+  folders   Folder[]
+  docs      Doc[]
 
   @@index([email])
   @@index([githubUsername])
@@ -43,4 +45,39 @@ model Keystore {
   @@index([clientId, primaryKey, status])
   @@index([clientId, primaryKey, secondaryKey])
   @@map("keystores")
+}
+
+model Folder {
+  id         Int      @id @default(autoincrement())
+  userId     Int      @map("user_id")
+  name       String
+  parentId   Int?     @map("parent_id")
+  orderIndex Int      @default(0) @map("order_index")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @default(now()) @updatedAt @map("updated_at")
+
+  user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  parent Folder? @relation("FolderToFolder", fields: [parentId], references: [id], onDelete: Cascade)
+  children Folder[] @relation("FolderToFolder")
+  docs   Doc[]
+
+  @@index([userId])
+  @@index([userId, parentId])
+}
+
+model Doc {
+  id         Int      @id @default(autoincrement())
+  userId     Int      @map("user_id")
+  folderId   Int?     @map("folder_id")
+  title      String
+  content    String   @default("")
+  orderIndex Int      @default(0) @map("order_index")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @default(now()) @updatedAt @map("updated_at")
+
+  user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  folder Folder? @relation(fields: [folderId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([userId, folderId])
 }
