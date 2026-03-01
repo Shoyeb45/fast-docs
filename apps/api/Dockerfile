@@ -42,7 +42,7 @@ COPY --chown=node:node prisma ./prisma/
 RUN npm ci --omit=dev
 
 # Generate prisma client in production image
-RUN npm run prisma:generate
+RUN npx prisma generate
 
 # Copy compiled output from builder
 COPY --chown=node:node --from=builder /app/dist ./dist

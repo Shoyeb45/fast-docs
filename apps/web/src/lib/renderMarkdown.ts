@@ -19,6 +19,11 @@ import html from "highlight.js/lib/languages/xml";
 import json from "highlight.js/lib/languages/json";
 import bash from "highlight.js/lib/languages/bash";
 import sql from "highlight.js/lib/languages/sql";
+import go from "highlight.js/lib/languages/go";
+import rust from "highlight.js/lib/languages/rust";
+import ruby from "highlight.js/lib/languages/ruby";
+import yaml from "highlight.js/lib/languages/yaml";
+import markdown from "highlight.js/lib/languages/markdown";
 
 export async function renderMarkdown(markdown: string) {
   const file = await unified()
@@ -29,27 +34,36 @@ export async function renderMarkdown(markdown: string) {
     .use(rehypeRaw)
     .use(rehypeKatex)
     .use(rehypeHighlight, {
-      // Register languages
       languages: {
         cpp,
-        c: cpp, // alias
-        "c++": cpp, // alias
+        c: cpp,
+        "c++": cpp,
         javascript,
-        js: javascript, // alias
+        js: javascript,
         typescript,
-        ts: typescript, // alias
+        ts: typescript,
         python,
-        py: python, // alias
+        py: python,
         java,
         css,
         html,
-        xml: html, // alias
+        xml: html,
         json,
         bash,
-        sh: bash, // alias
+        sh: bash,
+        shell: bash,
         sql,
+        go,
+        golang: go,
+        rust,
+        rs: rust,
+        ruby,
+        rb: ruby,
+        yaml,
+        yml: yaml,
+        markdown,
+        md: markdown,
       },
-      // Ignore missing languages instead of throwing
       ignoreMissing: true,
     })
     .use(rehypeStringify)

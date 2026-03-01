@@ -346,7 +346,7 @@ function TreeItem({ node, depth, onNewFolderInside, onRefetch }: { node: TreeNod
   return <DocItem doc={node.doc} depth={depth} isActive={isActive} />;
 }
 
-export function WorkspaceSidebar({ onToggle }: { onToggle?: () => void }) {
+export function WorkspaceSidebar({ onToggle, standalone }: { onToggle?: () => void; standalone?: boolean }) {
   const router = useRouter();
   const auth = useContext(AuthContext);
   const { folders, docs, isLoading, error, createDoc, createFolder, refetch, updateDoc, updateFolder } = useWorkspace();
@@ -419,20 +419,23 @@ export function WorkspaceSidebar({ onToggle }: { onToggle?: () => void }) {
     }
   };
 
-  return (
-    <aside className="flex w-56 shrink-0 flex-col border-r border-[#30363d] bg-[#161b22]/80">
+  const content = (
+    <>
       <div
         className={cn(
-          "flex items-center justify-between border-b border-[#30363d] px-2 py-2",
-          rootDropHighlight && "bg-[#238636]/20"
+          "flex items-center justify-between border-b border-[#30363d] px-3 py-3",
+          rootDropHighlight && "bg-[#238636]/20",
+          standalone && "border-0"
         )}
         onDragOver={handleRootDragOver}
         onDragLeave={handleRootDragLeave}
         onDrop={handleRootDrop}
       >
-        <span className="text-xs font-medium text-[#8b949e]">Workspace</span>
+        <span className={cn("font-medium text-[#c9d1d9]", standalone ? "text-base" : "text-xs text-[#8b949e]")}>
+          {standalone ? "Documents" : "Workspace"}
+        </span>
         <div className="flex items-center gap-0.5">
-          {onToggle && (
+          {!standalone && onToggle && (
             <Button
               type="button"
               variant="ghost"
@@ -445,9 +448,9 @@ export function WorkspaceSidebar({ onToggle }: { onToggle?: () => void }) {
             </Button>
           )}
           <Button
-            variant="ghost"
-            size="icon"
-            className="h-7 w-7 text-[#8b949e] hover:bg-[#21262d] hover:text-white"
+            variant={standalone ? "secondary" : "ghost"}
+            size={standalone ? "sm" : "icon"}
+            className={standalone ? "gap-1.5" : "h-7 w-7 text-[#8b949e] hover:bg-[#21262d] hover:text-white"}
             onClick={() => {
               if (!isAuthenticated) {
                 setLoginPromptOpen(true);
@@ -459,11 +462,12 @@ export function WorkspaceSidebar({ onToggle }: { onToggle?: () => void }) {
             title="New document"
           >
             <Plus className="h-4 w-4" />
+            {standalone && "New document"}
           </Button>
           <Button
-            variant="ghost"
-            size="icon"
-            className="h-7 w-7 text-[#8b949e] hover:bg-[#21262d] hover:text-white"
+            variant={standalone ? "secondary" : "ghost"}
+            size={standalone ? "sm" : "icon"}
+            className={standalone ? "gap-1.5" : "h-7 w-7 text-[#8b949e] hover:bg-[#21262d] hover:text-white"}
             onClick={() => {
               if (!isAuthenticated) {
                 setLoginPromptOpen(true);
@@ -475,12 +479,13 @@ export function WorkspaceSidebar({ onToggle }: { onToggle?: () => void }) {
             title="New folder"
           >
             <FolderPlus className="h-4 w-4" />
+            {standalone && "New folder"}
           </Button>
         </div>
       </div>
-      <div className="flex-1 overflow-y-auto p-1">
+      <div className={cn("flex-1 overflow-y-auto p-1", standalone && "min-h-0 p-3")}>
         {!isAuthenticated ? (
-          <div className="flex flex-col items-center gap-3 px-3 py-6 text-center">
+          <div className="flex flex-col items-center gap-4 px-3 py-12 text-center">
             <p className="text-sm text-[#8b949e]">
               Sign in with GitHub to view and create documents.
             </p>
@@ -491,6 +496,12 @@ export function WorkspaceSidebar({ onToggle }: { onToggle?: () => void }) {
             >
               Sign in with GitHub
             </Button>
+            <Link
+              href="/workspace/new"
+              className="text-sm text-[#58a6ff] hover:underline"
+            >
+              Or try the editor without signing in
+            </Link>
           </div>
         ) : isLoading ? (
           <p className="px-2 py-4 text-sm text-[#8b949e]">Loading…</p>
@@ -595,6 +606,19 @@ export function WorkspaceSidebar({ onToggle }: { onToggle?: () => void }) {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+    </>
+  );
+
+  if (standalone) {
+    return (
+      <div className="flex h-full flex-col bg-[#0d1117]">
+        {content}
+      </div>
+    );
+  }
+  return (
+    <aside className="flex w-56 shrink-0 flex-col border-r border-[#30363d] bg-[#161b22]/80">
+      {content}
     </aside>
   );
 }

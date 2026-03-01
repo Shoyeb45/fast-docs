@@ -54,27 +54,14 @@ export function MarkdownPreviewPanel({
   return (
     <div className="h-full bg-[#0d1117] relative">
       <ScrollArea className="h-full">
-        <div className="markdown-preview p-6 md:p-10 max-w-3xl mx-auto">
+        <div className="markdown-preview p-5 md:p-8 max-w-3xl mx-auto">
           {isLoading && (
-            <div className="absolute top-4 right-4 px-3 py-1 bg-[#21262d] text-[#8b949e] text-sm rounded-md border border-[#30363d] animate-pulse">
+            <div className="absolute top-3 right-3 px-2.5 py-1 bg-[#21262d] text-[#8b949e] text-xs rounded border border-[#30363d] animate-pulse">
               Rendering...
             </div>
           )}
           <div
-            className="prose prose-lg prose-invert max-w-none
-              prose-headings:text-[#c9d1d9] 
-              prose-p:text-[#c9d1d9] 
-              prose-a:text-[#58a6ff] 
-              prose-code:text-[#79c0ff] 
-              prose-strong:text-[#c9d1d9]
-              prose-pre:bg-[#161b22] 
-              prose-pre:border 
-              prose-pre:border-[#30363d]
-              prose-code:before:content-none
-              prose-code:after:content-none
-              prose-pre:p-0
-              prose-pre:my-4
-              "
+            className="prose prose-invert max-w-none [&>*]:mt-0 [&>*:first-child]:mt-0"
             dangerouslySetInnerHTML={{ __html: html }}
           />
         </div>

@@ -78,17 +78,17 @@ export const MarkdownEditorPanel = forwardRef<
           height: "100%",
         },
         ".cm-scroller": {
-          fontFamily: "'JetBrains Mono', monospace",
-          fontSize: "14px",
-          lineHeight: "1.6",
+          fontFamily: "var(--font-geist-mono), 'JetBrains Mono', ui-monospace, monospace",
+          fontSize: "13px",
+          lineHeight: "1.5",
           backgroundColor: "#0d1117",
         },
         ".cm-content": {
           caretColor: "#58a6ff",
-          padding: "16px 0",
+          padding: "12px 0",
         },
         ".cm-line": {
-          padding: "0 16px",
+          padding: "0 12px",
         },
         ".cm-activeLine": {
           backgroundColor: "rgba(88, 166, 255, 0.06)",

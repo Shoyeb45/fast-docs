@@ -1,11 +1,12 @@
 "use client";
 
 import { useContext, useCallback, useRef, useState } from "react";
+import Link from "next/link";
 import { AuthContext } from "@/context/auth-context";
 import { EditorHandle, MarkdownEditorPanel } from "@/components/editor/MarkdownEditor";
-import { MarkdownToolbar } from "@/components/editor/MarkdownToolbar";
 import { MarkdownPreviewPanel } from "@/components/editor/MarkdownPreviewPanel";
-import { ViewMode } from "@/components/editor/EditorState";
+import { MarkdownState } from "@/components/editor/EditorState";
+import type { ViewMode } from "@/components/editor/EditorState";
 import {
   ResizableHandle,
   ResizablePanel,
@@ -19,7 +20,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { FileText, Save } from "lucide-react";
+import { ArrowLeft, Save } from "lucide-react";
 import { initialMarkdownText } from "@/lib/constants";
 
 export function GuestEditor() {
@@ -33,9 +34,7 @@ export function GuestEditor() {
     setContent(text);
   }, []);
 
-  const handleSaveClick = () => {
-    setLoginDialogOpen(true);
-  };
+  const handleSaveClick = () => setLoginDialogOpen(true);
 
   const handleLogin = () => {
     setLoginDialogOpen(false);
@@ -44,31 +43,36 @@ export function GuestEditor() {
 
   return (
     <div className="flex h-full flex-col bg-[#0d1117]">
-      <div className="flex h-11 shrink-0 items-center justify-between gap-2 border-b border-[#30363d] bg-[#161b22]/90 px-3">
-        <div className="flex min-w-0 flex-1 items-center gap-2">
-          <FileText className="h-4 w-4 shrink-0 text-[#8b949e]" />
-          <span className="truncate text-sm font-medium text-[#c9d1d9]">Untitled</span>
-        </div>
-        <Button
-          type="button"
-          variant="outline"
-          size="sm"
-          className="shrink-0 gap-1.5 border-[#30363d] text-[#c9d1d9] hover:bg-[#21262d] hover:text-white"
-          onClick={handleSaveClick}
-          title="Save (sign in required)"
+      <header className="flex h-10 shrink-0 items-center gap-3 border-b border-[#30363d] bg-[#161b22]/80 px-3">
+        <Link
+          href="/workspace"
+          className="flex items-center gap-1 text-[#8b949e] hover:text-[#c9d1d9]"
+          title="Back to documents"
         >
-          <Save className="h-4 w-4" />
-          Save
-        </Button>
-      </div>
+          <ArrowLeft className="h-4 w-4" />
+        </Link>
+        <span className="min-w-0 truncate text-sm text-[#c9d1d9]">Untitled</span>
+        <div className="ml-auto flex items-center gap-2">
+          <MarkdownState
+            viewMode={viewMode}
+            onViewModeChange={setViewMode}
+            isMobile={false}
+          />
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            className="gap-1.5 text-[#8b949e] hover:text-[#c9d1d9]"
+            onClick={handleSaveClick}
+            title="Save (sign in required)"
+          >
+            <Save className="h-4 w-4" />
+            Save
+          </Button>
+        </div>
+      </header>
 
-      <MarkdownToolbar
-        viewMode={viewMode}
-        onViewModeChange={setViewMode}
-        onInsert={(text) => editorRef.current?.insertMarkdown(text)}
-        isMobile={false}
-      />
-      <div className="flex-1 min-h-0 overflow-hidden rounded-b-lg border-x border-b border-[#30363d]/80 bg-[#0d1117] mx-2 mb-2">
+      <div className="flex-1 min-h-0 overflow-hidden">
         <ResizablePanelGroup direction="horizontal" className="h-full">
           {(viewMode === "edit" || viewMode === "split") && (
             <ResizablePanel
