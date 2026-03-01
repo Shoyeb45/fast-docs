@@ -23,9 +23,9 @@ import go from "highlight.js/lib/languages/go";
 import rust from "highlight.js/lib/languages/rust";
 import ruby from "highlight.js/lib/languages/ruby";
 import yaml from "highlight.js/lib/languages/yaml";
-import markdown from "highlight.js/lib/languages/markdown";
+import markdownLang from "highlight.js/lib/languages/markdown";
 
-export async function renderMarkdown(markdown: string) {
+export async function renderMarkdown(source: string) {
   const file = await unified()
     .use(remarkParse)
     .use(remarkGfm)
@@ -61,13 +61,13 @@ export async function renderMarkdown(markdown: string) {
         rb: ruby,
         yaml,
         yml: yaml,
-        markdown,
-        md: markdown,
+        markdown: markdownLang,
+        md: markdownLang,
       },
       ignoreMissing: true,
     })
     .use(rehypeStringify)
-    .process(markdown);
+    .process(source);
 
   return String(file);
 }
