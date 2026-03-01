@@ -66,17 +66,17 @@ class ApiClient {
   }
 
   public getAccessToken(): string | null {
-    if (!window)
-        return null;
-    return window.localStorage?.getItem('accessToken');
+    if (typeof window === 'undefined') return null;
+    return localStorage.getItem('accessToken');
   }
 
   public getRefreshToken(): string | null {
-    if (!window) return null;
-    return window.localStorage?.getItem('refreshToken');
+    if (typeof window === 'undefined') return null;
+    return localStorage.getItem('refreshToken');
   }
 
   public setTokens(tokens: Tokens): void {
+    if (typeof window === 'undefined') return;
     localStorage.setItem('accessToken', tokens.accessToken);
     localStorage.setItem('refreshToken', tokens.refreshToken);
     this.startTokenRefreshTimer();
@@ -84,6 +84,7 @@ class ApiClient {
 
   private clearTokens(): void {
     this.stopTokenRefreshTimer();
+    if (typeof window === 'undefined') return;
     localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
   }
@@ -146,7 +147,7 @@ class ApiClient {
       this.clearTokens();
       const msg = axios.isAxiosError(error) ? getErrorMessage(error) : 'Session expired. Please sign in again.';
       toast.error(msg);
-      window.location.href = '/';
+      if (typeof window !== 'undefined') window.location.href = '/';
       throw error;
     }
   }
