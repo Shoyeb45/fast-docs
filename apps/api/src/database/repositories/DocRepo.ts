@@ -4,14 +4,23 @@ async function create(data: {
   userId: number;
   title: string;
   content?: string;
+  yjsState?: Buffer | Uint8Array;
   folderId?: number | null;
   orderIndex?: number;
 }) {
+  const yjsState: Uint8Array | undefined =
+    data.yjsState !== undefined
+      ? data.yjsState instanceof Uint8Array
+        ? data.yjsState
+        : new Uint8Array(data.yjsState as ArrayLike<number>)
+      : undefined;
   return prisma.doc.create({
     data: {
       userId: data.userId,
       title: data.title,
       content: data.content ?? '',
+      // Prisma Bytes (bytea) accepts Buffer at runtime; TS typings expect Uint8Array<ArrayBuffer>
+      yjsState: yjsState as never,
       folderId: data.folderId ?? null,
       orderIndex: data.orderIndex ?? 0,
     },
@@ -47,21 +56,29 @@ async function findManyByFolderId(userId: number, folderId: number | null) {
 async function update(
   id: number,
   userId: number,
-  data: { title?: string; content?: string; folderId?: number | null; orderIndex?: number }
+  data: { title?: string; content?: string; yjsState?: Buffer | Uint8Array; folderId?: number | null; orderIndex?: number }
 ) {
+  const payload: Record<string, unknown> = { ...data };
+  if (data.yjsState !== undefined) {
+    payload.yjsState = data.yjsState instanceof Uint8Array ? data.yjsState : new Uint8Array(data.yjsState);
+  }
   await prisma.doc.updateMany({
     where: { id, userId },
-    data,
+    data: payload as Parameters<typeof prisma.doc.updateMany>[0]['data'],
   });
 }
 
 async function updateOne(
   id: number,
-  data: { title?: string; content?: string; folderId?: number | null; orderIndex?: number }
+  data: { title?: string; content?: string; yjsState?: Buffer | Uint8Array; folderId?: number | null; orderIndex?: number }
 ) {
+  const payload: Record<string, unknown> = { ...data };
+  if (data.yjsState !== undefined) {
+    payload.yjsState = data.yjsState instanceof Uint8Array ? data.yjsState : new Uint8Array(data.yjsState);
+  }
   return prisma.doc.update({
     where: { id },
-    data,
+    data: payload as Parameters<typeof prisma.doc.update>[0]['data'],
   });
 }
 

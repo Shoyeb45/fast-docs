@@ -32,7 +32,12 @@ router.get(
   asyncHandler(async (req: ProtectedRequest, res) => {
     const id = Number(req.params.id);
     const doc = await DocService.getDoc(req.user.id, id);
-    new SuccessResponse('OK', doc).send(res);
+    const payload = {
+      ...doc,
+      yjsState: doc.yjsState ? (doc.yjsState as Buffer).toString('base64') : undefined,
+    };
+    if (payload.yjsState === undefined) delete payload.yjsState;
+    new SuccessResponse('OK', payload).send(res);
   })
 );
 
@@ -42,9 +47,17 @@ router.patch(
   validator(schema.updateDocBody, ValidationSource.BODY),
   asyncHandler(async (req: ProtectedRequest, res) => {
     const id = Number(req.params.id);
-    const body = req.body as { title?: string; content?: string; folderId?: number | null; orderIndex?: number };
-    const doc = await DocService.updateDoc(req.user.id, id, body);
-    new SuccessResponse('Updated', doc).send(res);
+    const body = req.body as { title?: string; content?: string; yjsState?: string; folderId?: number | null; orderIndex?: number };
+    const { yjsState: yjsStateB64, ...rest } = body;
+    const updatePayload = { ...rest } as Parameters<typeof DocService.updateDoc>[2];
+    if (yjsStateB64 !== undefined) (updatePayload as Record<string, unknown>).yjsState = Buffer.from(yjsStateB64, 'base64');
+    const doc = await DocService.updateDoc(req.user.id, id, updatePayload);
+    const payload = {
+      ...doc,
+      yjsState: doc.yjsState ? (doc.yjsState as Buffer).toString('base64') : undefined,
+    };
+    if (payload.yjsState === undefined) delete payload.yjsState;
+    new SuccessResponse('Updated', payload).send(res);
   })
 );
 

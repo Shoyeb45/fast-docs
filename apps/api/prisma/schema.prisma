@@ -71,6 +71,7 @@ model Doc {
   folderId   Int?     @map("folder_id")
   title      String
   content    String   @default("")
+  yjsState   Bytes?   @map("yjs_state")
   orderIndex Int      @default(0) @map("order_index")
   createdAt  DateTime @default(now()) @map("created_at")
   updatedAt  DateTime @default(now()) @updatedAt @map("updated_at")

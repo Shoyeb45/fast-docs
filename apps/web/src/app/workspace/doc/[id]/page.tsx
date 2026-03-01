@@ -1,22 +1,27 @@
 "use client";
 
 import { useParams, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import * as workspaceApi from "@/lib/workspace-api";
+import { AuthContext } from "@/context/auth-context";
 import { DocEditor } from "@/components/workspace/DocEditor";
+import { Button } from "@/components/ui/button";
 
 export default function DocPage() {
   const params = useParams();
   const router = useRouter();
+  const auth = useContext(AuthContext);
   const id = typeof params?.id === "string" ? parseInt(params.id, 10) : NaN;
   const [doc, setDoc] = useState<Awaited<ReturnType<typeof workspaceApi.getDoc>> | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const isAuthenticated = auth?.isAuthenticated ?? false;
+
   useEffect(() => {
-    if (!Number.isFinite(id)) {
+    if (!isAuthenticated || !Number.isFinite(id)) {
       setLoading(false);
-      setError("Invalid document ID");
+      if (!Number.isFinite(id)) setError("Invalid document ID");
       return;
     }
     let cancelled = false;
@@ -36,7 +41,30 @@ export default function DocPage() {
     return () => {
       cancelled = true;
     };
-  }, [id]);
+  }, [id, isAuthenticated]);
+
+  if (!isAuthenticated) {
+    return (
+      <div className="flex h-full flex-col items-center justify-center gap-4 p-8 text-center">
+        <p className="text-[#c9d1d9]">Sign in to open this document.</p>
+        <div className="flex gap-2">
+          <Button
+            variant="outline"
+            className="border-[#30363d] text-[#c9d1d9]"
+            onClick={() => router.push("/workspace")}
+          >
+            Back to workspace
+          </Button>
+          <Button
+            className="bg-[#238636] hover:bg-[#2ea043]"
+            onClick={() => auth?.loginWithGitHub()}
+          >
+            Sign in with GitHub
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   if (loading) {
     return (

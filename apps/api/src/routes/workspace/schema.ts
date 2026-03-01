@@ -18,6 +18,7 @@ const createDocBody = z.object({
 const updateDocBody = z.object({
   title: z.string().min(1).max(500).optional(),
   content: z.string().optional(),
+  yjsState: z.string().optional(),
   folderId: z.number().int().positive().nullable().optional(),
   orderIndex: z.number().int().min(0).optional(),
 });

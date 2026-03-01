@@ -1,9 +1,13 @@
 import DocRepo from '../database/repositories/DocRepo';
 import FolderRepo from '../database/repositories/FolderRepo';
 
+type Folder = Awaited<ReturnType<typeof FolderRepo.findManyByUserId>>[number];
+type DocWithYjs = Awaited<ReturnType<typeof DocRepo.findManyByUserId>>[number];
+type DocListItem = Omit<DocWithYjs, 'yjsState'>;
+
 export interface WorkspaceData {
-  folders: Awaited<ReturnType<typeof FolderRepo.findManyByUserId>>;
-  docs: Awaited<ReturnType<typeof DocRepo.findManyByUserId>>;
+  folders: Folder[];
+  docs: DocListItem[];
 }
 
 async function getWorkspace(userId: number): Promise<WorkspaceData> {
@@ -11,7 +15,10 @@ async function getWorkspace(userId: number): Promise<WorkspaceData> {
     FolderRepo.findManyByUserId(userId),
     DocRepo.findManyByUserId(userId),
   ]);
-  return { folders, docs };
+  return {
+    folders,
+    docs: docs.map(({ yjsState: _y, ...d }) => d),
+  };
 }
 
 export default {

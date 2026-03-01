@@ -30,6 +30,8 @@ export interface Doc {
   folderId: number | null;
   title: string;
   content: string;
+  /** Base64-encoded Yjs document state; used for CRDT persistence and real-time sync */
+  yjsState?: string;
   orderIndex: number;
   createdAt: Date;
   updatedAt: Date;

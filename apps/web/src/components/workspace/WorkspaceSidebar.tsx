@@ -3,8 +3,9 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { ChevronDown, ChevronRight, FileText, Folder, FolderPlus, MoreHorizontal, PanelLeftClose, Plus, Trash2 } from "lucide-react";
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { useWorkspace } from "@/context/WorkspaceContext";
+import { AuthContext } from "@/context/auth-context";
 import { buildWorkspaceTree, type TreeNode } from "@/lib/workspace-tree";
 import { Button } from "@/components/ui/button";
 import {
@@ -347,6 +348,7 @@ function TreeItem({ node, depth, onNewFolderInside, onRefetch }: { node: TreeNod
 
 export function WorkspaceSidebar({ onToggle }: { onToggle?: () => void }) {
   const router = useRouter();
+  const auth = useContext(AuthContext);
   const { folders, docs, isLoading, error, createDoc, createFolder, refetch, updateDoc, updateFolder } = useWorkspace();
   const [newDocOpen, setNewDocOpen] = useState(false);
   const [newFolderOpen, setNewFolderOpen] = useState(false);
@@ -356,7 +358,10 @@ export function WorkspaceSidebar({ onToggle }: { onToggle?: () => void }) {
   const [creatingDoc, setCreatingDoc] = useState(false);
   const [creatingFolder, setCreatingFolder] = useState(false);
   const [rootDropHighlight, setRootDropHighlight] = useState(false);
+  const [loginPromptOpen, setLoginPromptOpen] = useState(false);
 
+  const isAuthenticated = auth?.isAuthenticated ?? false;
+  const loginWithGitHub = auth?.loginWithGitHub;
   const tree = buildWorkspaceTree(folders, docs);
 
   const handleRootDragOver = (e: React.DragEvent) => {
@@ -370,6 +375,7 @@ export function WorkspaceSidebar({ onToggle }: { onToggle?: () => void }) {
   const handleRootDrop = (e: React.DragEvent) => {
     e.preventDefault();
     setRootDropHighlight(false);
+    if (!isAuthenticated) return;
     const docId = e.dataTransfer.getData("application/x-fastdocs-doc");
     const folderId = e.dataTransfer.getData("application/x-fastdocs-folder");
     if (docId) {
@@ -443,6 +449,10 @@ export function WorkspaceSidebar({ onToggle }: { onToggle?: () => void }) {
             size="icon"
             className="h-7 w-7 text-[#8b949e] hover:bg-[#21262d] hover:text-white"
             onClick={() => {
+              if (!isAuthenticated) {
+                setLoginPromptOpen(true);
+                return;
+              }
               setParentFolderId(null);
               setNewDocOpen(true);
             }}
@@ -455,6 +465,10 @@ export function WorkspaceSidebar({ onToggle }: { onToggle?: () => void }) {
             size="icon"
             className="h-7 w-7 text-[#8b949e] hover:bg-[#21262d] hover:text-white"
             onClick={() => {
+              if (!isAuthenticated) {
+                setLoginPromptOpen(true);
+                return;
+              }
               setParentFolderId(null);
               setNewFolderOpen(true);
             }}
@@ -465,7 +479,20 @@ export function WorkspaceSidebar({ onToggle }: { onToggle?: () => void }) {
         </div>
       </div>
       <div className="flex-1 overflow-y-auto p-1">
-        {isLoading ? (
+        {!isAuthenticated ? (
+          <div className="flex flex-col items-center gap-3 px-3 py-6 text-center">
+            <p className="text-sm text-[#8b949e]">
+              Sign in with GitHub to view and create documents.
+            </p>
+            <Button
+              size="sm"
+              className="bg-[#238636] text-white hover:bg-[#2ea043]"
+              onClick={() => loginWithGitHub?.()}
+            >
+              Sign in with GitHub
+            </Button>
+          </div>
+        ) : isLoading ? (
           <p className="px-2 py-4 text-sm text-[#8b949e]">Loading…</p>
         ) : error ? (
           <div className="px-2 py-4">
@@ -545,6 +572,25 @@ export function WorkspaceSidebar({ onToggle }: { onToggle?: () => void }) {
             </Button>
             <Button onClick={handleCreateFolder} disabled={creatingFolder} className="bg-[#238636] hover:bg-[#2ea043]">
               {creatingFolder ? "Creating…" : "Create"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={loginPromptOpen} onOpenChange={setLoginPromptOpen}>
+        <DialogContent className="bg-[#161b22] border-[#30363d]">
+          <DialogHeader>
+            <DialogTitle className="text-[#c9d1d9]">Sign in to create and save</DialogTitle>
+          </DialogHeader>
+          <p className="text-sm text-[#8b949e] py-2">
+            Sign in with GitHub to create documents and folders and save your work.
+          </p>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setLoginPromptOpen(false)} className="border-[#30363d] text-[#c9d1d9]">
+              Cancel
+            </Button>
+            <Button className="bg-[#238636] hover:bg-[#2ea043]" onClick={() => { setLoginPromptOpen(false); loginWithGitHub?.(); }}>
+              Sign in with GitHub
             </Button>
           </DialogFooter>
         </DialogContent>

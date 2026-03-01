@@ -8,6 +8,7 @@ import {
   useEffect,
   useState,
 } from "react";
+import { AuthContext } from "@/context/auth-context";
 import * as workspaceApi from "@/lib/workspace-api";
 import type { Doc, Folder, WorkspaceData } from "@/types";
 
@@ -35,11 +36,20 @@ type WorkspaceContextValue = {
 const WorkspaceContext = createContext<WorkspaceContextValue | null>(null);
 
 export function WorkspaceProvider({ children }: { children: ReactNode }) {
+  const auth = useContext(AuthContext);
   const [data, setData] = useState<WorkspaceData>({ folders: [], docs: [] });
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const isAuthenticated = auth?.isAuthenticated ?? false;
+
   const refetch = useCallback(async () => {
+    if (!isAuthenticated) {
+      setData({ folders: [], docs: [] });
+      setError(null);
+      setIsLoading(false);
+      return;
+    }
     setError(null);
     try {
       const next = await workspaceApi.getWorkspace();
@@ -49,11 +59,17 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [isAuthenticated]);
 
   useEffect(() => {
+    if (!isAuthenticated) {
+      setData({ folders: [], docs: [] });
+      setError(null);
+      setIsLoading(false);
+      return;
+    }
     refetch();
-  }, [refetch]);
+  }, [isAuthenticated, refetch]);
 
   const createDoc = useCallback(
     async (payload: { title: string; folderId?: number | null; content?: string }) => {

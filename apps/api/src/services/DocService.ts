@@ -24,7 +24,7 @@ async function getDoc(userId: number, docId: number) {
 async function updateDoc(
   userId: number,
   docId: number,
-  data: { title?: string; content?: string; folderId?: number | null; orderIndex?: number }
+  data: { title?: string; content?: string; yjsState?: Buffer; folderId?: number | null; orderIndex?: number }
 ) {
   const existing = await DocRepo.findByUserIdAndId(userId, docId);
   if (!existing) throw new NotFoundError('Document not found');
