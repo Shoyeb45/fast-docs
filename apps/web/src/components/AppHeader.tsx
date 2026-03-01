@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useContext } from "react";
 import { AuthContext } from "@/context/auth-context";
 import { Button } from "@/components/ui/button";
@@ -20,7 +21,9 @@ export function AppHeader() {
 
   return (
     <header className="flex h-11 shrink-0 items-center justify-between border-b border-[#30363d] bg-[#161b22]/80 px-4">
-      <span className="text-sm font-medium text-[#8b949e]">Fast Docs</span>
+      <Link href="/workspace" className="text-sm font-medium text-[#8b949e] hover:text-[#c9d1d9]">
+        Fast Docs
+      </Link>
       <div className="flex items-center gap-2">
         {isLoading ? (
           <Loader2 className="h-4 w-4 animate-spin text-[#8b949e]" />
