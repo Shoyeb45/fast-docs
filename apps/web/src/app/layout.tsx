@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { JetBrains_Mono, Outfit } from "next/font/google";
 import "./globals.css";
 import { GlobalProviders } from "@/context/global-providers";
+import { Toaster } from "sonner";
 
 const outfit = Outfit({
   variable: "--font-outfit",
@@ -31,6 +32,7 @@ export default function RootLayout({
         <GlobalProviders>
           {children}
         </GlobalProviders>
+        <Toaster richColors position="top-right" />
       </body>
     </html>
   );

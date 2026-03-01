@@ -4,7 +4,7 @@ import axios from 'axios';
 import crypto from 'crypto';
 import keystoreRepository from '../../database/repositories/KeyStoreRepo';
 import { asyncHandler } from '../../core/asyncHandler';
-import { github } from '../../config';
+import { github, frontendUrl } from '../../config';
 import { validator } from '../../middlewares/validator.middleware';
 import { ValidationSource } from '../../helpers/validator';
 import {
@@ -13,7 +13,6 @@ import {
     NotFoundError,
 } from '../../core/ApiError';
 import userRepository from '../../database/repositories/UserRepo';
-import { SuccessResponse } from '../../core/ApiResponse';
 import { createTokens } from '../../core/authUtils';
 import { generateDeviceFingerprint } from '../../core/utils';
 
@@ -107,10 +106,11 @@ router.get(
             deviceFingerprint
         )
 
-        new SuccessResponse('Login Success', {
-            user: createdUser,
-            tokens, 
-        }).send(res);
+        const hash = new URLSearchParams({
+            accessToken: tokens.accessToken,
+            refreshToken: tokens.refreshToken,
+        }).toString();
+        res.redirect(`${frontendUrl}/auth/callback#${hash}`);
     }),
 );
 export default router;

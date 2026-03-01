@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 export const originUrl = process.env.ORIGIN_URL;
+export const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
 export const isProduction = process.env.NODE_ENV === 'production';
 export const timeZone = process.env.TZ;
 export const port = process.env.PORT;

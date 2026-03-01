@@ -9,6 +9,7 @@ import {
   ResizablePanelGroup,
 } from "../ui/resizable";
 import { MarkdownPreviewPanel } from "./MarkdownPreviewPanel";
+import { AppHeader } from "@/components/AppHeader";
 
 export default function Editor() {
   // Markdown variable to handle the text of the editor
@@ -46,7 +47,8 @@ export default function Editor() {
 
   return (
     <div className="flex flex-col h-screen bg-[#0d1117]">
-      
+      <AppHeader />
+
       {/* The header of the markdown editor, where the insertions and the view mode is there */}
       <MarkdownToolbar
         viewMode={viewMode}
