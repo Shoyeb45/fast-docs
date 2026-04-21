@@ -1,0 +1,25 @@
+{
+  "name": "fast-docs",
+  "version": "0.0.0",
+  "private": true,
+  "workspaces": [
+    "apps/*"
+  ],
+  "scripts": {
+    "build": "nx run-many -t build",
+    "dev": "nx run-many -t dev",
+    "start": "nx run-many -t start",
+    "lint": "nx run-many -t lint",
+    "test": "nx run-many -t test"
+  },
+  "devDependencies": {
+    "@nx/docker": "22.6.5",
+    "@nx/eslint": "22.6.5",
+    "@nx/jest": "22.6.5",
+    "@nx/next": "22.6.5",
+    "@nx/node": "^22.6.5",
+    "eslint": "~8.57.0",
+    "jest": "^30.0.2",
+    "nx": "22.6.5"
+  }
+}

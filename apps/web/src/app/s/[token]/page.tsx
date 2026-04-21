@@ -4,13 +4,11 @@ import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { getDocByShareToken } from "@/lib/workspace-api";
 import { MarkdownPreviewPanel } from "@/components/editor/MarkdownPreviewPanel";
-import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 
 export default function SharedDocPage() {
   const params = useParams();
-  const router = useRouter();
   const token = typeof params?.token === "string" ? params.token : Array.isArray(params?.token) ? params.token[0] : "";
   const [doc, setDoc] = useState<Awaited<ReturnType<typeof getDocByShareToken>> | null>(null);
   const [loading, setLoading] = useState(true);

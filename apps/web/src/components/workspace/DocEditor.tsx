@@ -90,6 +90,7 @@ export function DocEditor({
         Y.applyUpdate(ydoc, state);
       } catch (_e) {
         ytext.insert(0, initialContent);
+        console.error(_e); 
       }
     } else {
       ytext.insert(0, initialContent);
