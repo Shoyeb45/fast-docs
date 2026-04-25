@@ -18,8 +18,14 @@
     "@nx/jest": "22.6.5",
     "@nx/next": "22.6.5",
     "@nx/node": "^22.6.5",
+    "dotenv-flow": "^4.1.0",
     "eslint": "~8.57.0",
     "jest": "^30.0.2",
     "nx": "22.6.5"
+  },
+  "pnpm": {
+    "overrides": {
+      "baseline-browser-mapping": "latest"
+    }
   }
 }

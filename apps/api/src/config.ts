@@ -1,6 +1,4 @@
-import dotenv from 'dotenv';
-
-dotenv.config();
+import 'dotenv-flow/config';
 
 export const originUrl = process.env.ORIGIN_URL;
 export const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';

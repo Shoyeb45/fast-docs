@@ -1,9 +1,9 @@
-import { NextFunction, Request, Response } from 'express';
+import { ErrorRequestHandler, NextFunction, Request, Response } from 'express';
 import logger from './../core/logger.js';
 import { isProduction } from './../config.js';
 import { ApiError, ErrorType } from './../core/ApiError.js';
 
-export const errorHandler = (
+export const errorHandler: ErrorRequestHandler = (
     err: Error,
     req: Request,
     res: Response,
