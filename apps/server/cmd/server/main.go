@@ -1,0 +1,23 @@
+package main
+
+import (
+	"github.com/Shoyeb45/fast-docs/internal/app"
+	"github.com/Shoyeb45/fast-docs/pkg/config"
+	"github.com/Shoyeb45/fast-docs/pkg/logger"
+)
+
+func main() {
+	// read environment variables
+	if err := config.LoadEnvironmentVariables(); err != nil {
+		panic(err.Error())
+	}
+
+	// initialize logger
+	if err := logger.Init(); err != nil {
+		panic(err.Error());
+	}
+	logger.Log.Info("Logger initialized successfully.");
+	
+	app.New()
+
+}
