@@ -9,10 +9,10 @@
     2. [] Makefile + docker-compose (postgres) --skip
     3. [X] Config loading (env/godotenv)
     4. [X] slog setup
-    5. [] Database migrations (goose) + first schema
-    6. [] sqlc setup + codegen verified
-    7. [] pgx connection pool wired up
-    8. [] Chi server with request ID, loggin®g, recovery middleware
+    5. [X] Database migrations (goose) + first schema
+    6. [X] sqlc setup + codegen verified
+    7. [X] pgx connection pool wired up
+    8. [] Chi server with request ID, logging, recovery middleware
     9. [] Error handling strategy decided + helper written
     10. [] Linting (golangci-lint) + GitHub Actions workflow
     11. [] Unit test setup + GitHub Actions workflow

@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/Shoyeb45/fast-docs/internal/app"
 	"github.com/Shoyeb45/fast-docs/pkg/config"
+	"github.com/Shoyeb45/fast-docs/pkg/database"
 	"github.com/Shoyeb45/fast-docs/pkg/logger"
 )
 
@@ -17,6 +18,11 @@ func main() {
 		panic(err.Error());
 	}
 	logger.Log.Info("Logger initialized successfully.");
+	
+	if err := database.Connect(); err != nil {
+		panic(err.Error());
+	}
+	defer database.Close();
 	
 	app.New()
 

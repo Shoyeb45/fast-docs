@@ -65,3 +65,8 @@ pkg/
 
 docs/             ← new (swag generates this)
 ```
+
+
+# Running migration
+
+- goose -dir internal/db/migrations postgres "$DB_URL" up
