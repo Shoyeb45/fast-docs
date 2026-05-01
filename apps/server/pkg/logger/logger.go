@@ -4,14 +4,14 @@ import (
 	"io"
 	"log/slog"
 	"os"
-
 	"github.com/Shoyeb45/fast-docs/pkg/config"
 )
 
-// Logger to be used througout in the application
+// Log is Logger and it should be used througout in the application.
 var Log *slog.Logger
 
-// Initialize logger, must be called before accessing `Log`
+
+// Init will Initialize the logger, must be called before accessing `Log`.
 func Init() error {
 	stage := config.Cfg.Stage
 
@@ -26,8 +26,8 @@ func Init() error {
 			panic(err.Error())
 		}
 
-		file, err := os.OpenFile("./" + config.Cfg.LogDirectory + "/app.log", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
-		
+		file, err := os.OpenFile("./"+config.Cfg.LogDirectory+"/app.log", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
+
 		if err != nil {
 			return err
 		}
@@ -43,7 +43,10 @@ func Init() error {
 			Level: slog.LevelDebug,
 		})
 	}
-	Log = slog.New(handler)
+	Log = slog.New(handler).With(
+		"service", "fast-docs",
+		"env", stage,
+	)
 	slog.SetDefault(Log)
 
 	return nil

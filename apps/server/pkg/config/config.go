@@ -11,14 +11,14 @@ import (
 
 type Config struct {
 	// Stage or environemnt of the application. dev or prod
-	Stage                   string
-	DatabaseUrl             string
-	Port                    string
-	GithubClientId          string
-	GithubClientSecret      string
+	Stage              string
+	DatabaseURL        string
+	Port               string
+	GithubClientID     string
+	GithubClientSecret string
 	// Frontend application url
-	OriginUrl               string
-	GithubRedirectUrl       string
+	OriginURL               string
+	GithubRedirectURL       string
 	JwtPrivateKey           string
 	JwtPublicKey            string
 	TokenIssuer             string
@@ -26,21 +26,24 @@ type Config struct {
 	AccessTokenValiditySec  string
 	RefreshTokenValiditySec string
 	// Directory where logging should happen
-	LogDirectory            string
+	LogDirectory   string
+	TimeoutSeconds string
 }
 
 var Cfg *Config
 
 func LoadEnvironmentVariables() error {
-	godotenv.Load(".env")
+	if err := godotenv.Load(".env"); err != nil {
+		return err
+	}
 
 	Cfg = &Config{
-		DatabaseUrl:             getEnv("DATABASE_URL", ""),
+		DatabaseURL:             getEnv("DATABASE_URL", ""),
 		Port:                    getEnv("PORT", "8080"),
-		GithubClientId:          getEnv("GITHUB_CLIENT_ID", ""),
+		GithubClientID:          getEnv("GITHUB_CLIENT_ID", ""),
 		GithubClientSecret:      getEnv("GITHUB_CLIENT_SECRET", ""),
-		OriginUrl:               getEnv("ORIGIN_URL", "http://localhost:3000"),
-		GithubRedirectUrl:       getEnv("GIHUB_REDIRECT_URL", "https://github.com/login/oauth/authorize"),
+		OriginURL:               getEnv("ORIGIN_URL", "http://localhost:3000"),
+		GithubRedirectURL:       getEnv("GIHUB_REDIRECT_URL", "https://github.com/login/oauth/authorize"),
 		JwtPrivateKey:           getEnv("JWT_PRIVATE_KEY", ""),
 		JwtPublicKey:            getEnv("JWT_PUBLIC_KEY", ""),
 		TokenIssuer:             getEnv("TOKEN_ISSUER", ""),
@@ -48,59 +51,66 @@ func LoadEnvironmentVariables() error {
 		AccessTokenValiditySec:  getEnv("ACCESS_TOKEN_VALIDITY_SEC", "3600"),
 		RefreshTokenValiditySec: getEnv("REFRESH_TOKEN_VALIDITY_SEC", "864000"),
 		Stage:                   getEnv("STAGE", "dev"),
-		LogDirectory: 			 getEnv("LOG_DIRECTORY", "logs"),
+		LogDirectory:            getEnv("LOG_DIRECTORY", "logs"),
+		TimeoutSeconds:          getEnv("TIMEOUT_SECONDS", "12"),
 	}
 
 	return validateEnvironmentVariables()
 }
 
 func validateEnvironmentVariables() error {
-	var err error = nil
+	var err error
 
 	if err = validatePort(); err != nil {
 		return err
 	}
 
-	if err = validateDatabaseUrl(); err != nil {
+	if err = validateDatabaseURL(); err != nil {
 		return err
 	}
 
-	if Cfg.GithubClientId == "" {
-		return errors.New("Github Client ID should not be empty.")
+	if Cfg.GithubClientID == "" {
+		return errors.New("github Client ID should not be empty")
 	}
 
 	if Cfg.GithubClientSecret == "" {
-		return errors.New("Github Client Secret should not be empty.")
+		return errors.New("github Client Secret should not be empty")
 	}
 
-	if Cfg.OriginUrl == "" || (!strings.HasPrefix(Cfg.OriginUrl, "http://") && !strings.HasPrefix(Cfg.OriginUrl, "https://")) {
-		return errors.New("Origin URL must be a given for CORS and it must start with http:// or https://")
+	if Cfg.OriginURL == "" ||
+		(!strings.HasPrefix(Cfg.OriginURL, "http://") && !strings.HasPrefix(Cfg.OriginURL, "https://")) {
+		return errors.New("origin URL must be a given for CORS and it must start with http:// or https://")
 	}
 
-	if Cfg.GithubRedirectUrl == "" {
-		return errors.New("Github Redirect URL must be provided")
+	if Cfg.GithubRedirectURL == "" {
+		return errors.New("github Redirect URL must be provided")
 	}
 
 	if Cfg.JwtPrivateKey == "" || Cfg.JwtPublicKey == "" {
-		return errors.New("JWT Keys must be provided for secure authentication.")
+		return errors.New("JWT Keys must be provided for secure authentication")
 	}
 
 	if Cfg.Stage == "" || (Cfg.Stage != "dev" && Cfg.Stage != "prod") {
-		return errors.New("STAGE must be either dev or prod.")
+		return errors.New("STAGE must be either dev or prod")
+	}
+
+	_, er := strconv.Atoi(Cfg.TimeoutSeconds)
+	if er != nil {
+		return er
 	}
 
 	return err
 }
 
-func validateDatabaseUrl() error {
-	dbUrl := Cfg.DatabaseUrl
+func validateDatabaseURL() error {
+	dbURL := Cfg.DatabaseURL
 
-	if dbUrl == "" {
-		return errors.New("Database url cannot be empty.")
+	if dbURL == "" {
+		return errors.New("database url cannot be empty")
 	}
 
-	if !strings.HasPrefix(dbUrl, "postgresql://") && !strings.HasPrefix(dbUrl, "potgres://") {
-		return errors.New("You must provide postgres database url which starts with postgresql:// or postgres://")
+	if !strings.HasPrefix(dbURL, "postgresql://") && !strings.HasPrefix(dbURL, "potgres://") {
+		return errors.New("you must provide postgres database url which starts with postgresql:// or postgres://")
 	}
 	return nil
 }

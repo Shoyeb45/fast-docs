@@ -3,6 +3,7 @@ package database
 import (
 	"context"
 	"time"
+	
 	"github.com/Shoyeb45/fast-docs/pkg/config"
 	"github.com/Shoyeb45/fast-docs/pkg/logger"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -14,7 +15,7 @@ func Connect() error {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	pool, err := pgxpool.New(ctx, config.Cfg.DatabaseUrl)
+	pool, err := pgxpool.New(ctx, config.Cfg.DatabaseURL)
 	if err != nil {
 		return err
 	}

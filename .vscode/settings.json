@@ -4,5 +4,7 @@
       "mode": "auto"
     }
   ],
-  "prisma.pinToPrisma6": true
+  "prisma.pinToPrisma6": true,
+  "go.lintTool": "golangci-lint",
+  "go.lintOnSave": "file"
 }

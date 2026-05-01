@@ -1,6 +1,8 @@
 package main
 
 import (
+	"net/http"
+	
 	"github.com/Shoyeb45/fast-docs/internal/app"
 	"github.com/Shoyeb45/fast-docs/pkg/config"
 	"github.com/Shoyeb45/fast-docs/pkg/database"
@@ -15,15 +17,21 @@ func main() {
 
 	// initialize logger
 	if err := logger.Init(); err != nil {
-		panic(err.Error());
+		panic(err.Error())
 	}
-	logger.Log.Info("Logger initialized successfully.");
-	
+
+	logger.Log.Info("Logger initialized successfully.")
+
 	if err := database.Connect(); err != nil {
-		panic(err.Error());
+		panic(err.Error())
 	}
-	defer database.Close();
-	
-	app.New()
+	defer database.Close()
+
+	chiMux := app.New()
+
+	if err := http.ListenAndServe(":"+config.Cfg.Port, chiMux); err != nil {
+		logger.Log.Error("failed to start application")
+		panic(err.Error())
+	}
 
 }

@@ -1,24 +1,25 @@
 package app
 
 import (
-	"net/http"
+	"time"
 
-	"github.com/Shoyeb45/fast-docs/pkg/config"
-	"github.com/Shoyeb45/fast-docs/pkg/logger"
+	errormiddleware "github.com/Shoyeb45/fast-docs/api/middleware/error-middleware"
+	requestLogger "github.com/Shoyeb45/fast-docs/api/middleware/request-logger"
 	"github.com/go-chi/chi"
-);
+	"github.com/go-chi/chi/middleware"
+)
 
-func New() {
-	r := chi.NewRouter();
+func New() *chi.Mux {
+	r := chi.NewRouter()
 
-	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("Hi"))
-	})
+	const timeout = 10 * time.Second
 
-	err := http.ListenAndServe(":" + config.Cfg.Port, r);
+	r.Use(middleware.RequestID)
+	r.Use(middleware.RealIP)
+	r.Use(middleware.Timeout(timeout))
+	r.Use(middleware.Recoverer)        // recovers from panic
+	r.Use(requestLogger.RequestLogger) // logs request details
+	r.Use(errormiddleware.ErrorHandler())
 
-	if err != nil {
-		logger.Log.Error("Failed to start application");
-		panic(err.Error());
-	}
+	return r
 }
